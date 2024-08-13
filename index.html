@@ -10,18 +10,18 @@
     <p>Please wait while we process your request.</p>
 
     <script>
-        // Function to get the query parameter by name
+        // Function to get query parameters by name
         function getQueryParam(name) {
             const urlParams = new URLSearchParams(window.location.search);
             return urlParams.get(name);
         }
 
-        // Extract the authorization code from the URL
+        // Extract the authorization code and realmId from the URL
         const authorizationCode = getQueryParam('code');
-        const authorizationRealmId = getQueryParam('realmId');
+        const realmId = getQueryParam('realmId');
 
-        if (authorizationCode) {
-            // Construct the Power Automate URL with the authorization code
+        if (authorizationCode && realmId) {
+            // Construct the Power Automate URL with the authorization code and realmId
             const powerAutomateUrl = 'https://prod-63.northeurope.logic.azure.com:443/workflows/bd25c14808fa437fb9a56f9d1675b4cc/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=LNiBMsz5QKbls3N9zKLITH80Uup8QcuK6-nLqeA6N_U';
 
             // Make an HTTP POST request to the Power Automate URL
@@ -30,19 +30,22 @@
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ code: authorizationCode, realmId: authorizationRealmId})
+                body: JSON.stringify({
+                    code: authorizationCode,
+                    realmId: realmId
+                })
             })
             .then(response => response.json())
             .then(data => {
                 console.log('Success:', data);
-                document.body.innerHTML = "<h2>Authorization code successfully sent!</h2>";
+                document.body.innerHTML = "<h2>Authorization code and realmId successfully sent!</h2>";
             })
             .catch((error) => {
                 console.error('Error:', error);
                 document.body.innerHTML = "<h2>There was an error processing your request.</h2>";
             });
         } else {
-            document.body.innerHTML = "<h2>No authorization code found in the URL.</h2>";
+            document.body.innerHTML = "<h2>Missing authorization code or realmId in the URL.</h2>";
         }
     </script>
 </body>
