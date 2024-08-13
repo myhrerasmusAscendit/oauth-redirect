@@ -18,6 +18,7 @@
 
         // Extract the authorization code from the URL
         const authorizationCode = getQueryParam('code');
+        const authorizationRealmId = getQueryParam('realmId');
 
         if (authorizationCode) {
             // Construct the Power Automate URL with the authorization code
@@ -29,7 +30,7 @@
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ code: authorizationCode })
+                body: JSON.stringify({ code: authorizationCode, realmId: authorizationRealmId})
             })
             .then(response => response.json())
             .then(data => {
