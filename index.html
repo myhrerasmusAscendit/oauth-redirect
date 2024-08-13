@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OAuth Redirect</title>
+</head>
+<body>
+    <h1>Redirecting...</h1>
+    <p>Please wait while we process your request.</p>
+
+    <script>
+        // Function to get the query parameter by name
+        function getQueryParam(name) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
+        }
+
+        // Extract the authorization code from the URL
+        const authorizationCode = getQueryParam('code');
+
+        if (authorizationCode) {
+            // Construct the Power Automate URL with the authorization code
+            const powerAutomateUrl = 'https://prod-63.northeurope.logic.azure.com:443/workflows/bd25c14808fa437fb9a56f9d1675b4cc/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=LNiBMsz5QKbls3N9zKLITH80Uup8QcuK6-nLqeA6N_U';
+
+            // Make an HTTP POST request to the Power Automate URL
+            fetch(powerAutomateUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ code: authorizationCode })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+                document.body.innerHTML = "<h2>Authorization code successfully sent!</h2>";
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                document.body.innerHTML = "<h2>There was an error processing your request.</h2>";
+            });
+        } else {
+            document.body.innerHTML = "<h2>No authorization code found in the URL.</h2>";
+        }
+    </script>
+</body>
+</html>
